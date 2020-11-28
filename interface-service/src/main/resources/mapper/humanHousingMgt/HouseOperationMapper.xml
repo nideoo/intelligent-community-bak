@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.humanHousingMgt.HouseOperationMapper" >
+
+
+  <select id="getAreaGroupTreeSql" resultType="java.util.Map" parameterType="com.enc.domain.platform.vo.humanHousingMgt.TreeTermVo" >
+    select id,`name`,parent_id from t_area_group where parent_id = #{parentId}
+    <if test="communityName !=null and communityName !='' ">
+      and `name` LIKE concat(concat('%',#{communityName}),'%')
+    </if>
+  </select>
+
+  <select id="getBuildingsTreeSql" resultType="java.util.Map" parameterType="java.lang.String" >
+    select id,`name` from t_buildings where area_group_id = #{communityId}
+  </select>
+
+  <select id="getHouseOperationDetailsSql" resultType="java.util.Map" parameterType="java.util.Map" >
+    select id,`name`,img_url 'imgUrl',`describe` from t_area_group where id = #{areaGroupId}
+  </select>
+
+  <select id="getMaxFloorSql" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select IFNULL(max(floor),0) floor from t_room where building_id = #{buildingId}
+  </select>
+
+  <select id="getRoomSql" resultType="java.util.Map" parameterType="java.lang.String" >
+    select id,`name`,floor,room_type from t_room where building_id = #{buildingId}
+  </select>
+
+  <select id="getRoomPersonCouSql" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select count(*) person_cou from t_person where parentID = #{roomId}
+  </select>
+
+  <select id="getRoomDetailsSql" resultType="java.util.Map" parameterType="java.lang.String" >
+    select
+     pn.`name`,pn.id_number,df.pay_close_attention,df.photo,df.real_time_photo,df.other_photo,a.`name` pay_close_attention_name
+    from
+        t_person pn LEFT JOIN t_detailinfo df on df.person_id = pn.id
+                    LEFT JOIN (select * from t_dictionary where type = '3.13') a on df.pay_close_attention = a.id
+    where
+        pn.parentID = #{roomId}
+  </select>
+
+  <select id="getRoomSumByIdSql" resultType="java.util.Map" parameterType="java.lang.String" >
+    select id,`name`,ifnull(r_cou,0) r_cou,ifnull(p_cou,0) p_cou from t_room_person_sum where id= #{id}
+  </select>
+
+  <select id="getRoomTypeSumByIdSql" resultType="java.util.Map" parameterType="java.lang.String" >
+    select
+      xq.id,xq.`name`,ifnull(lx.name,'其他') lx_name,count(*) cou
+    from
+        t_room rm LEFT JOIN t_buildings bs on rm.building_id = bs.id
+                            LEFT JOIN t_area_group xq on bs.area_group_id = xq.id
+                            RIGHT JOIN (select * from t_dictionary where type = '3.27') lx on rm.room_type = lx.id
+    where
+        bs.id = #{id}
+    group by
+        xq.id,xq.`name`,lx.name
+  </select>
+
+  <select id="getTotalFloor" resultType="java.lang.String">
+    select total_floor from t_buildings where id = #{id}
+  </select>
+
+  <select id="getLdRsCou" resultType="java.util.Map">
+    select
+     lx.`name`,count(*) cou
+    from
+        t_detailinfo df LEFT JOIN (select * from t_dictionary where type = '3.10') lx on df.population_type = lx.id
+    where
+        df.population_type is not null
+        and df.person_id in (
+        select pn.id from t_person pn LEFT JOIN t_detailinfo df on df.person_id = df.id LEFT JOIN t_room rm on pn.parentID = rm.id LEFT JOIN t_buildings ld on rm.building_id = ld.id where ld.id = #{id}
+    ) group by lx.`name`
+  </select>
+
+  <select id="getZdgzCou" resultType="java.lang.String">
+    select
+        count(*) cou
+    from
+        t_buildings bs left join t_room rm on bs.id = rm.building_id
+                                     left join t_person pn on rm.id = pn.parentID
+                                     left join t_detailinfo di on pn.id = di.person_id
+    where
+        di.pay_close_attention != 0
+        and di.pay_close_attention is not null
+        and bs.area_group_id = #{id}
+  </select>
+
+  <select id="getAreaTypeCou" resultType="java.util.Map">
+    select * from (select lx.`name`,count(*) cou from t_detailinfo df LEFT JOIN (select * from t_dictionary where type = '3.10') lx on df.population_type = lx.id
+    where df.population_type is not null and df.person_id in (select pn.id from t_person pn LEFT JOIN t_room rm on pn.parentID = rm.id
+    LEFT JOIN t_buildings ld on rm.building_id = ld.id LEFT JOIN t_area_group xq on ld.area_group_id = xq.id where xq.id = #{id}
+    ) group by lx.`name`) a where a.`name` is not null
+  </select>
+
+  <select id="getXqZdgzCou" resultType="java.lang.String">
+    select
+        count(pn.id) cou
+    from
+        t_person pn LEFT JOIN t_detailinfo df on df.person_id = df.id
+                    LEFT JOIN t_room rm on pn.parentID = rm.id
+                    LEFT JOIN t_buildings ld on rm.building_id = ld.id
+                    LEFT JOIN t_area_group xq on ld.area_group_id = xq.id
+    where
+        df.pay_close_attention != 0
+        and xq.id = #{id}
+  </select>
+
+  <select id="getGzType" resultType="java.util.Map">
+    select a.id,a.gz_cou,b.zd_cou from (select
+        '1' id,count(*) gz_cou
+    from
+        t_person pn LEFT JOIN t_detailinfo df on df.person_id = pn.id
+                                LEFT JOIN t_room rm on pn.parentID = rm.id
+
+    where
+        rm.id = #{id}
+        and df.pay_close_attention in (1,5)) a left join
+    (
+    select
+        '1' id,count(*) zd_cou
+    from
+        t_person pn LEFT JOIN t_detailinfo df on df.person_id = pn.id
+                                LEFT JOIN t_room rm on pn.parentID = rm.id
+    where
+        rm.id = #{id}
+        and df.pay_close_attention in (2,3,4)
+    ) b on a.id = b.id
+  </select>
+
+    <select id="getAreaGroupInfo" resultType="java.util.Map">
+      select * from t_area_group where id = #{id}
+    </select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

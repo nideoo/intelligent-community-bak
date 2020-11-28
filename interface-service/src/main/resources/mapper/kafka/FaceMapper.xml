@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.kafka.FaceMapper" >
+
+  <select id="maxId" resultType="java.lang.Integer">
+    select (IFNULL(max(id),1)+1) id from t_face;
+  </select>
+
+  <insert id="addFace" parameterType="com.enc.domain.platform.entity.kafka.FaceEntity">
+    insert into t_face(id,faceId,act,datetime,score_recg,username,age,sex,identity_num,phone,image,bg_image,sample_image,mac,ip,create_date) values(
+    #{id},#{faceId},#{act},#{datetime},#{scoreRecg},#{username},#{age},#{sex},#{identityNum},#{phone},#{image},#{bgImage},#{sampleImage},#{mac},
+    #{ip},#{createDate});
+  </insert>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

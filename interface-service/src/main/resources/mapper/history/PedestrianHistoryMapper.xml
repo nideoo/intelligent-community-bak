@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.history.PedestrianHistoryMapper" >
+
+    <select id="getHisPedestrianListSql" parameterType="com.enc.domain.platform.vo.history.pedestrian.PedestrianListQueryVo" resultType="java.util.Map" >
+        select
+            id,IFNULL(username,'') username,IFNULL(identity_num,'') identityNum,
+            score_recg scoreRecg,image,bg_image bgImage,sample_image sampleImage,
+            datetime,create_date createDate
+        from
+            t_face
+        <where>
+            <if test="name != '' and name != null">
+                and username LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="identityNum != '' and identityNum != null">
+                and identity_num LIKE CONCAT('%',#{identityNum},'%')
+            </if>
+            <if test="scoreRecg != '' and scoreRecg != null">
+                and score_recg &gt;= #{scoreRecg}
+            </if>
+            <if test="beginDate != '' and beginDate != null">
+                and create_date &gt;= #{beginDate}
+            </if>
+            <if test="endDate != '' and endDate != null">
+                and create_date &lt;= #{endDate}
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="getHisPedestrianTopSql" parameterType="com.enc.domain.platform.vo.history.pedestrian.PedestrianListQueryVo" resultType="java.util.Map" >
+        select *,'face' web_socket_type from t_face
+        where
+          DATE_FORMAT(datetime,'%Y-%c-%d') = #{date}
+          and username != '未知'
+        order by id desc limit 0,1
+    </select>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

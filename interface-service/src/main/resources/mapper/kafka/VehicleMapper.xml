@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.kafka.VehicleMapper" >
+
+  <select id="maxId" resultType="java.lang.Integer">
+    select IFNULL(max(id),1) id from t_vehicle
+  </select>
+
+  <insert id="addVehicle" parameterType="com.enc.domain.platform.entity.kafka.VehicleEntity">
+    insert into t_vehicle(car_logo,start_time,car_plate,color,park_id,camera_id,`type`,picture,create_date) values(
+    #{carLogo},#{startTime},#{carPlate},#{color},#{parkId},#{cameraId},#{type},#{picture},#{createDate});
+  </insert>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

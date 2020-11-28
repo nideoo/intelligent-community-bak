@@ -1,0 +1,84 @@
+spring:
+  application:
+    name: interface-service
+  datasource:
+    # url : jdbc:mysql://172.19.255.250:3306/intelligent-community?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false
+    # driver-class-name : com.mysql.jdbc.Driver
+    # username: root
+    # password: 1qazZAQ!
+    url: jdbc:mysql://60.255.139.172:3306/intelligent-community?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1qazZAQ!
+
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      test-on-borrow: false
+      test-while-idle: true
+      test-on-return: false
+      validation-query: SELECT 1 FROM DUAL
+      filter:
+        stat:
+          log-slow-sql: true
+      filters: stat,wall,log4j
+############################-begin-kafka-##########################################
+#  kafka:
+#      bootstrap-servers: 47.103.46.142:9092
+#      producer:
+#        retries: 0
+        # 每次批量发送消息的数量
+#        batch-size: 16384
+        # 缓存容量
+#        buffer-memory: 33554432
+        # 指定消息key和消息体的编解码方式
+#        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      consumer:
+        # 指定默认消费者group id
+#        group-id: patrolData-group
+#        auto-commit-interval: 100
+#        auto-offset-reset: earliest
+#        enable-auto-commit: true
+        # 指定消息key和消息体的编解码方式
+#        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        # 指定listener 容器中的线程数，用于提高并发量
+#      listener:
+#        concurrency: 3
+############################-end-kafka-##########################################
+
+  jackson:
+    serialization :
+       indent-output : true
+
+  #redis
+  redis:
+    host: 192.168.0.122
+    port: 6379
+    password: foobared
+    timeout: 10000
+
+
+server:
+  port: 8080
+#mybatis
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  type-aliases-package: com.enc.domain.entity
+
+patch:
+    url: /0-project/pictureFile
+    vehicle:
+      data-url: /camera/vehicle/
+    face:
+      data-url: /camera/face/
+    areaGroup:
+      data-url: /ms/area-group/
+

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.RecordsMapper" >
+
+    <insert id="addTRecords" parameterType="com.enc.domain.access.entity.TRecords" >
+        insert into t_records (
+            recordID,
+            personID,
+            personName,
+            personClass,
+            personType,
+            status,
+            path,
+            doorID,
+            doorName,
+            `type`,
+            info,
+            result,
+            `time`
+        )
+        values (
+            #{recordId},
+            #{personId},
+            #{personName},
+            #{personClass},
+            #{personType},
+            #{status},
+            #{path},
+            #{doorId},
+            #{doorName},
+            #{type},
+            #{info},
+            #{result},
+            #{time}
+        )
+    </insert>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

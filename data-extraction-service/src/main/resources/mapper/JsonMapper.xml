@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.JsonMapper" >
+
+    <!-- 获取小区 -->
+    <select id="getCommunity" resultType="java.util.Map">
+        select
+            xq.id,
+            xq.name xqName,
+            xq.community,
+            xq.address,
+            xq.responsible_police responsiblePolice,
+            xq.gridman,
+            xq.pm_company pmCompany,
+            xq.pm_phone pmPhone,
+            xq.pm_person pmPerson,
+            xq.pm_mobile pmMobile,
+            jd.name jdName
+        from
+            t_area_group xq left join t_area_group jd on xq.parent_id = jd.id
+        where
+            xq.area_group_type is not null
+            limit 100
+    </select>
+
+    <!-- 获取楼栋 -->
+    <select id="getBuildings" resultType="java.util.Map">
+       select
+            tbs.id,
+            tbs.name ldName,
+            tbs.area_group_id xqId,
+            tbs.building_type buildingType,
+            tbs.person_count personCount,
+            tbs.address,
+            tbs.total_floor totalFloor,
+            tag.`name` xqName
+        from
+            t_buildings tbs left join t_area_group tag on tbs.area_group_id = tag.id
+            limit 200
+    </select>
+
+
+    <!-- 获取房屋 -->
+    <select id="getRoom" resultType="java.util.Map">
+      select
+          trm.id,
+          trm.name fwName,
+          trm.room_level,
+          trm.room_type,
+          trm.floor,
+            trm.building_id,
+            tbs.`name` ldName,
+            xq.name xqName,
+            jd.`name` jdName
+        from
+            t_room trm left join t_buildings tbs on trm.building_id = tbs.id
+                       left join t_area_group xq on tbs.area_group_id = xq.id
+                       left join t_area_group jd on xq.parent_id = jd.id
+    </select>
+
+
+    <!-- 获取人员 -->
+    <select id="getPerson" resultType="java.util.Map">
+       select
+            tpn.id pId,
+            tpn.name pName,
+            tpn.id_number idNuber,
+            tpn.phone,
+            tpn.gender,
+            tdi.other_name otherName,
+            tdi.sex,
+            tdi.id_card_type idCardType,
+            tdi.birthday,
+            tdi.profession,
+            tdi.unit,
+            tdi.nation,
+            tdi.residence_address residenceAddress,
+            tdi.account_type accountType,
+            tdi.account_address accountAddress,
+            tdi.province,
+            tdi.education_level educationLevel,
+            tdi.marital_status maritalStatus,
+            tdi.spouse_name spouseName,
+            tdi.spouse_phone spousePhone,
+            tdi.spouse_id_card_no spouseIdCardNo,
+            tdi.population_type populationType,
+            tdi.live_type liveType,
+            tdi.certificate_type certificateType,
+            tdi.religion,
+            tdi.pay_close_attention payCloseAttention,
+            tdi.alarm_day alarmDay,
+            tdi.level,
+            tdi.remark,
+            tdi.photo,
+            tdi.real_time_photo realTimePhoto,
+            tdi.other_photo otherPhoto,
+            tdi.trade,
+            tdi.positional_titles positionalTitles,
+            tdi.employee_id employeeId,
+            tdi.unit_address unitAddress,
+            tdi.post,
+            tdi.emergency_contact emergencyContact,
+            tdi.emergency_contact_phone emergencyContactPhone,
+            tdi.office_phone officePhone,
+            tdi.workPhone,
+            tdi.email,
+            tdi.wechat,
+            tdi.rtx,
+            tdi.unit_police_station unitPoliceStation,
+            tdi.department,
+            tdi.unionist,
+            tdi.military_service militaryService,
+            tdi.residence_type residenceType,
+            tdi.residence_cause residenceCause,
+            tdi.move_in_time moveInTime,
+            tdi.move_out_time moveOutTime,
+            tdi.area,
+            tdi.town,
+            tdi.police_station policeStation,
+            tdi.neighborhood,
+            tdi.street,
+            tdi.basic_grid_cell basicGridCell,
+            tdi.building_no buildingNo,
+            tdi.room_no roomNo,
+            tdi.unit_no unitNo,
+            tdi.room_code roomCode,
+            tdi.landlord_name landlordName,
+            tdi.landlordID_card landlordIDCard,
+            tdi.landlord_phone landlordPhone,
+            tdi.landlord_relative landlordRelative,
+            tdi.liability_statement liabilityStatement,
+            tdi.is_lessee isLessee,
+            tdi.is_recurrent isRecurrent,
+            tdi.bear_status bearStatus,
+            tdi.contraception_status contraceptionStatus,
+            tdi.family_plan_card_type familyPlanCardType,
+            tdi.family_plan_no familyPlanNo,
+            tdi.small_child smallChild,
+            tdi.disability_type disabilityType,
+            tdi.residence_permit_type residencePermitType,
+            tdi.residence_permit_no residencePermitNo,
+            tdi.is_first_bid isFirstBid,
+            tdi.residence_permit_create_date residencePermitCreateDate,
+            tdi.residence_permit_validate_date residencePermitValidateDate,
+            tdi.person_id personId,
+            tdi.filling_name fillingName,
+            tdi.filling_unit fillingUnit,
+            tdi.filling_date fillingDate
+        from
+            (select DISTINCT * from t_person) tpn left join t_detailinfo tdi on tpn.id = tdi.person_id
+        limit #{start},#{size}
+    </select>
+
+    <select id="getRecords" parameterType="java.lang.String" resultType="java.util.Map">
+        select
+            recordID recordId,
+            personID personId,
+            personName,
+            personClass,
+            personType,
+            status,
+            path,
+            doorID doorId,
+            doorName,
+            `type`,
+            info,
+            result,
+            `time`
+        from
+            t_records
+        where
+            time  like concat('%',#{time},'%')
+    </select>
+
+    <select id="getYxq" resultType="java.lang.String">
+        select yxq from t_yxq_date
+    </select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

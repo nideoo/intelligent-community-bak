@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.AuthorizationInfoMapper" >
+
+    <insert id="addAuthorization" parameterType="com.enc.domain.access.entity.AuthorizationInfoEntity" >
+       insert into t_authorization_info (
+        personID,idNumber,userPhone,doorID,doorTyp,doorName,path,X,Y,connectionKey,keyID,status,endTime
+       ) values (
+        #{personID},#{idNumber},#{userPhone},#{doorID},#{doorTyp},#{doorName},#{path},#{X},#{Y},
+        #{connectionKey},#{keyID},#{status},#{endTime}
+      )
+    </insert>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

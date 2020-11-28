@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.statistics.PersonMapper" >
+
+    <!-- [3.13:重点关注] [9.01:人员关注等级(标签)] -->
+    <select id="getPersonListSql" parameterType="com.enc.domain.platform.vo.statistics.PersonListVo" resultType="java.util.Map" >
+        select * from (
+        select
+            tp.id,tp.`name`,tp.id_number,tp.phone,
+            CASE tp.gender WHEN '0' THEN '女' WHEN '1' THEN '男' ELSE '其他' END gender,
+            td.account_address,td.photo,td.real_time_photo,td.other_photo,
+            tp.`level`, rybq.name rybq_name,
+            td.pay_close_attention,
+            zdgz.name zdgz_name,left(id_number,2) zdgz,left(id_number,4) zdgz1
+        from
+            t_person tp LEFT JOIN t_detailinfo td on tp.id = td.person_id
+                        LEFT JOIN (select * from t_dictionary where type = "3.13") zdgz on zdgz.id = td.pay_close_attention
+                        LEFT JOIN (select * from t_dictionary where type = "9.01") rybq on rybq.id = tp.`level`
+        <where>
+            <if test="name !=null and name != ''">
+                tp.`name` like concat(concat('%',#{name}),'%')
+            </if>
+            <if test="idCard !=null and idCard != ''">
+                tp.id_number = #{idCard}
+            </if>
+            <if test="payCloseAttention !=null and payCloseAttention != ''">
+                td.pay_close_attention = #{payCloseAttention}
+            </if>
+        </where>
+        ) a
+        <where>
+            <if test="populInflow !=null and populInflow != ''">
+                and a.zdgz = #{populInflow}
+            </if>
+            <if test="populInflow1 !=null and populInflow1 != ''">
+                and a.zdgz1 = #{populInflow1}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

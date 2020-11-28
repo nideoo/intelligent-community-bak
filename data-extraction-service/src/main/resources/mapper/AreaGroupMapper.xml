@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.AreaGroupMapper" >
+
+    <insert id="addAreaGroupData" parameterType="com.enc.domain.access.entity.AreaGroupEntity" >
+        insert into t_area_group(id,`name`,parent_id,area_group_type,community,address,responsible_police,gridman,pm_company,pm_phone,pm_person,pm_mobile)
+        VALUES (#{id},#{name},#{parentId},#{areaGroupType},#{community},#{address},#{responsiblePolice},#{gridman},#{pmCompany},#{pmPhone},#{pmPerson},#{pmMobile})
+    </insert>
+
+
+</mapper>

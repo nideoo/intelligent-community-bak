@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.RoomMapper" >
+
+    <insert id="addRoom" parameterType="com.enc.domain.access.entity.RoomEntity" >
+        insert into t_room (
+            id,`name`,building_id,city,area,town,police_station,neighborhood,street,building_no,community,
+            building,unit,room_no,room_code,landlord_name,room_level,room_type,floor,house_type,certificate_number
+        )
+        values (
+            #{id},#{name},#{buildingId},#{city},#{area},#{town},#{policeStation},#{neighborhood},#{street},#{buildingNo},
+            #{community},#{building},#{unit},#{roomNo},#{roomCode},#{landlordName},#{roomLevel},#{roomType},#{floor},
+            #{houseType},#{certificateNumber}
+        )
+    </insert>
+    <select id="getRoomById" resultType="java.lang.Integer">
+        select count(*) cou  from t_room where id = #{id}
+    </select>
+
+    <select id="getRoomByIdSumSql" resultType="java.util.Map">
+      select a.id,a.`name`,a.r_cou,b.p_cou from (
+          select bs.id,bs.`name`,count(*) r_cou from t_room rm LEFT JOIN t_buildings bs on rm.building_id = bs.id group by bs.id,bs.`name`
+          union all
+            select xq.id,xq.`name`,count(*) r_cou from t_room rm LEFT JOIN t_buildings bs on rm.building_id = bs.id LEFT JOIN t_area_group xq on bs.area_group_id = xq.id group by xq.id,xq.`name`
+          union all
+            select jd.id,jd.`name`,count(*) r_cou from t_room rm LEFT JOIN t_buildings bs on rm.building_id = bs.id LEFT JOIN t_area_group xq on bs.area_group_id = xq.id LEFT JOIN t_area_group jd on xq.parent_id = jd.id group by jd.id,jd.`name`
+          union all
+            select qx.id,qx.`name`,count(*) r_cou from t_room rm LEFT JOIN t_buildings bs on rm.building_id = bs.id LEFT JOIN t_area_group xq on bs.area_group_id = xq.id LEFT JOIN t_area_group jd on xq.parent_id = jd.id LEFT JOIN t_area_group qx on jd.parent_id = qx.id group by qx.id,qx.`name`
+          ) a left join (
+          select * from (
+              select bs.id,bs.`name`,count(*) p_cou from t_person pn LEFT JOIN t_room rm on pn.parentID = rm.id LEFT JOIN t_buildings bs on rm.building_id = bs.id group by bs.id,bs.`name`
+            union all
+              select xq.id,xq.`name`,count(*) p_cou from t_person pn LEFT JOIN t_room rm on pn.parentID = rm.id LEFT JOIN t_buildings bs on rm.building_id = bs.id LEFT JOIN t_area_group xq on bs.area_group_id = xq.id group by xq.id,xq.`name`
+            union all
+              select jd.id,jd.`name`,count(*) p_cou from t_person pn LEFT JOIN t_room rm on pn.parentID = rm.id LEFT JOIN t_buildings bs on rm.building_id = bs.id LEFT JOIN t_area_group xq on bs.area_group_id = xq.id LEFT JOIN t_area_group jd on xq.parent_id = jd.id group by jd.id,jd.`name`
+            union all
+              select qx.id,qx.`name`,count(*) p_cou from t_person pn LEFT JOIN t_room rm on pn.parentID = rm.id LEFT JOIN t_buildings bs on rm.building_id = bs.id LEFT JOIN t_area_group xq on bs.area_group_id = xq.id LEFT JOIN t_area_group jd on xq.parent_id = jd.id LEFT JOIN t_area_group qx on jd.parent_id = qx.id group by qx.id,qx.`name`
+          ) a where a.id is not null
+        )b on a.id = b.id
+    </select>
+
+    <select id="getRoomSumCount" resultType="java.lang.Integer">
+      select count(*) cou from t_room_person_sum where id = #{id}
+    </select>
+
+    <insert id="addRoomSum" parameterType="java.util.Map">
+        insert into t_room_person_sum(id,name,r_cou,p_cou) value (#{id},#{name},#{r_cou},#{p_cou})
+    </insert>
+
+    <update id="updateRoomSum" parameterType="java.util.Map">
+        update t_room_person_sum set r_cou = #{r_cou},p_cou = #{p_cou} where id = #{id}
+    </update>
+
+    <delete id="delRoomByIdSql">
+        delete from t_room where id = #{id}
+    </delete>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

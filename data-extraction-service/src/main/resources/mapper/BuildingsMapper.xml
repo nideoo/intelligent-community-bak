@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.BuildingsMapper" >
+
+    <insert id="addBuildingsData" parameterType="com.enc.domain.access.entity.BuildingsEntity" >
+        insert into t_buildings(id,`name`,area_group_id,building_type,person_count,address,total_floor,is_statistics,house_code,landlordId1,landlordId2)
+        VALUES (#{id},#{name},#{areaGroupId},#{buildingType},#{personCount},#{address},#{totalFloor},#{isStatistics},#{houseCode},#{landlordId1},#{landlordId2})
+    </insert>
+
+    <select id="getbuildingsId" resultType="java.util.Map">
+        select id  from t_buildings
+    </select>
+
+    <delete id="delBuildingsByIdSql">
+        delete from t_buildings where id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.statistics.RoomMapper" >
+
+    <select id="getRoomListSql" parameterType="com.enc.domain.platform.vo.statistics.RoomListVo" resultType="java.util.Map" >
+      select
+        tr.id,
+        CONCAT(jd.`name`,' ',xq.`name`,' ',tb.`name`,' ',tr.floor,'层') address,
+        tr.`name` room,
+        tr.landlord_name,
+        tr.room_code,
+        tr.room_level,
+        ifnull(fwdj.`name`,'') room_level_name,
+        tr.room_type,
+        ifnull(fwsylx.`name`,'') room_type_name,
+        tr.house_type,
+        tr.certificate_number,
+        tr.police_station,
+        tr.neighborhood
+      from
+        t_room tr left join t_buildings tb on tr.building_id = tb.id
+                  left join t_area_group xq on tb.area_group_id = xq.id
+                  left join t_area_group jd on xq.parent_id = jd.id
+                  left join (select * from t_dictionary where type = '3.26') fwdj on tr.room_level = fwdj.id
+				  left join (select * from t_dictionary where type = '3.27') fwsylx on tr.room_type = fwsylx.id
+      <where>
+          <if test="streetId != '' and streetId != null">
+              and jd.id = #{streetId}
+          </if>
+          <if test="communityId != '' and communityId != null">
+              and xq.id = #{communityId}
+          </if>
+          <if test="buildingId != '' and buildingId != null">
+              and tb.id = #{buildingId}
+          </if>
+          <if test="roomLevel != '' and roomLevel != null">
+              and tr.room_level = #{roomLevel}
+          </if>
+          <if test="roomType != '' and roomType != null">
+              and tr.room_type = #{roomType}
+          </if>
+      </where>
+        order by tr.id desc
+    </select>
+
+    <select id="getStreetCommByIdListSql" resultType="java.util.Map" >
+      select id,`name` from t_area_group where parent_id = #{id};
+    </select>
+
+    <select id="getBuildingsByIdListSql" resultType="java.util.Map" >
+      select id,`name` from t_buildings where area_group_id = #{id};
+    </select>
+
+    <select id="getRoomInfo" resultType="java.util.Map">
+        select * from t_room where id = #{id}
+    </select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

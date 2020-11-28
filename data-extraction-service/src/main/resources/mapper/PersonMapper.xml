@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.PersonMapper" >
+
+     <!--删除所有人数据-->
+     <delete id="deletePerson">
+        delete from t_person where id = #{personId}
+     </delete>
+      <!--删除所有人详细信息数据-->
+      <delete id="deleteDetailInfo">
+          delete from t_detailinfo where person_id = #{personId}
+      </delete>
+      <!--删除所有卡信息数据-->
+      <delete id="deteleCardInfo">
+          delete from  t_cardinfo where person_id = #{personId}
+      </delete>
+      <!--删除所有随行信息数据-->
+      <delete id="deleteEntourage">
+           delete from  t_entourage where person_id = #{personId}
+      </delete>
+
+    <insert id="addPerson" parameterType="com.enc.domain.access.entity.PersonsEntity" >
+        insert into t_person (id,name,id_number,phone,level,parentID,t_province_id,gender)
+        values (#{id},#{name},#{idNumber},#{phone},#{level},#{parentID},#{personId},#{gender})
+    </insert>
+
+    <select id="personCountById" resultType="java.lang.Integer">
+        select count(*) cou from t_person where id = #{id}
+    </select>
+
+    <select id="getLocalPersons" resultType="com.enc.domain.access.entity.PersonsEntity" parameterType="java.util.Map">
+         select id,name,id_number idNumber,phone,level,parentID  from t_person limit #{index},#{pageNumber}
+    </select>
+
+    <insert id="addCardInfo" parameterType="com.enc.domain.access.entity.CardInfoEntity" >
+        insert into t_cardinfo (card_no,start_time,end_time,card_state,personCardType,cardType,person_id)
+        values (#{cardNO},#{startTime},#{endTime},#{cardState},#{personCardType},#{cardType},#{personId})
+    </insert>
+
+    <insert id="addDetailInfo" parameterType="com.enc.domain.access.entity.DetailInfoEntity" >
+        insert into t_detailinfo (
+                other_name,sex,id_card_type,birthday,profession,unit,nation,residence_address,
+                account_type,account_address,province,education_level,marital_status,spouse_name,
+                spouse_phone,spouse_id_card_no,population_type,live_type,certificate_type,religion,
+                pay_close_attention,alarm_day,level,remark,photo,real_time_photo,other_photo,trade,
+                positional_titles,employee_id,unit_address,post,emergency_contact,emergency_contact_phone,
+                office_phone,workPhone,email,wechat,rtx,unit_police_station,department,unionist,military_service,
+                residence_type,residence_cause,move_in_time,move_out_time,area,town,police_station,neighborhood,street,
+                basic_grid_cell,building_no,room_no,unit_no,room_code,landlord_name,landlordID_card,landlord_phone,
+                landlord_relative,liability_statement,is_lessee,is_recurrent,bear_status,contraception_status,
+                family_plan_card_type,family_plan_no,small_child,disability_type,residence_permit_type,
+                residence_permit_no,is_first_bid,residence_permit_create_date,residence_permit_validate_date,
+                filling_name,filling_unit,filling_date,person_id
+        )
+        values (
+                #{otherName},#{sex},#{idCardType},#{birthday},#{profession},#{unit},#{nation},#{residenceAddress},#{accountType},
+                #{accountAddress},#{province},#{educationLevel},#{maritalStatus},#{spouseName},#{spousePhone},#{spouseIDCardNO},
+                #{populationType},#{liveType},#{certificateType},#{religion},#{payCloseAttention},#{alarmDay},#{level},#{remark},
+                #{photo},#{realTimePhoto},#{otherPhoto},#{trade},#{positionalTitles},#{employeeID},#{unitAddress},#{post},
+                #{emergencyContact},#{emergencyContactPhone},#{officePhone},#{workPhone},#{email},#{weChat},#{rtx},#{unitPoliceStation},
+                #{department},#{unionist},#{militaryService},#{residenceType},#{residenceCause},#{moveInTime},#{moveOutTime},#{area},
+                #{town},#{policeStation},#{neighborhood},#{street},#{basicGridCell},#{buildingNO},#{roomNO},#{unitNO},#{roomCode},
+                #{landlordName},#{landlordIDCard},#{landlordPhone},#{landlordRelative},#{liabilityStatement},#{isLessee},#{isRecurrent},
+                #{bearStatus},#{contraceptionStatus},#{familyPlanCardType},#{familyPlanNO},#{smallChild},#{disabilityType},
+                #{residencePermitType},#{residencePermitNO},#{isFirstBid},#{residencePermitCreateDate},#{residencePermitValidate},
+                #{fillingName},#{fillingUnit},#{fillingDate},#{personId}
+        )
+    </insert>
+
+    <insert id="addEntourage" parameterType="com.enc.domain.access.entity.EntourageEntity" >
+        insert into  t_entourage(name,sex,relation,nation,id_number,birthday,inoculation_card,learn_stage,school_name,person_id)
+        values (#{name},#{sex},#{relation},#{nation},#{idNumber},#{birthday},#{inoculationCard},#{learnStage},#{schoolName},#{personId})
+    </insert>
+
+    <select id="getPersDisNameList" resultType="java.util.Map">
+        select DISTINCT `name` from t_person
+    </select>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.system.AreaGroupMapper" >
+
+    <select id="getAreaGroupListSql" parameterType="com.enc.domain.platform.vo.areaGroup.AreaGroupListVo" resultType="java.util.Map" >
+        select id,`name`,parent_id,address,img_url,`describe` from t_area_group where `name` like concat(concat('%',#{name}),'%')
+    </select>
+
+    <update id="areaGroupUpdateSql" parameterType="com.enc.domain.platform.vo.areaGroup.AreaGroupUpdateVo">
+        update t_area_group set `describe` = #{describe} , img_url = #{imgUrl} where id = #{id}
+    </update>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enc.dao.mapper.homePage.HomePageMapper" >
+
+  <!-- 人口统计 -->
+  <select id="getPersonCouSql" resultType="java.util.Map">
+    select a.syrk,b.czrk,c.zzrk from
+      (select '1' id,count(DISTINCT id_number) syrk from t_person) a left join
+      (select DISTINCT '1' id,'1881' czrk from t_person) b on a.id = b.id left join
+      (select DISTINCT '1' id,'112' zzrk from t_person) c on a.id = c.id
+  </select>
+
+  <!-- 房屋统计 -->
+  <select id="getHousingCouSql" resultType="java.lang.String">
+    select count(*) syfw from t_room
+  </select>
+
+  <!-- 人口结构分析 -->
+  <select id="getSexRatioCouSql" resultType="java.util.Map">
+    select gender,count(*) cou from t_person group by gender;
+  </select>
+
+  <select id="getFaceInfoById" resultType="com.enc.domain.platform.entity.kafka.FaceEntity">
+    select id,faceId,act,datetime,score_recg scoreRecg,username,age,sex,identity_num identityNum,phone,image,
+    bg_image bgImage,sample_image sampleImage,mac,ip,create_date createDate from t_face where id = #{id};
+  </select>
+
+  <select id="getVehicleInfoById" resultType="com.enc.domain.platform.entity.kafka.VehicleEntity">
+    select id,car_logo carLogo,start_time startTime,car_plate carPlate,color,park_id parkId,camera_id cameraId,
+    `type`,picture,create_date createDate from t_vehicle where id = #{id};
+  </select>
+
+  <select id="getDeviceCou" resultType="java.util.Map">
+    select count(*) cou,case device_type when 1 then 'rlxj' when 2 then 'clxj' else '其他' end type from t_device_tree where device_type != "" group by device_type
+    union all
+    select count(*) cou,'mj' type  from t_devices_ms
+  </select>
+
+  <select id="getVehicleCou" resultType="java.util.Map">
+    select count(*) cou, 'bdcl' type from t_vehicle where car_plate like '%川R%'
+    union all
+    select count(*) cou, 'wdcl' type from t_vehicle where car_plate not like '%川R%'
+  </select>
+
+  <select id="getPopuInflowCou" resultType="java.util.Map">
+    select count(*) cou,t_province_id from t_person where t_province_id in (54,65) group by t_province_id
+    union all
+    select count(*) cou,t_province_id from (select id,left(id_number,4) t_province_id from t_person ) a where  t_province_id = '5133'
+  </select>
+
+  <select id="getHousingStructureCou" resultType="java.util.Map">
+    select
+     count(*) cou,IFNULL(fwsylx.name,"其他") l_name
+    from
+        t_room tr left join (select * from t_dictionary where type = '3.27') fwsylx on tr.room_type = fwsylx.id
+    where
+      fwsylx.name is not null
+    group by
+        fwsylx.name
+  </select>
+
+  <select id="getAttentionCou" resultType="java.util.Map">
+    select
+        zt.`name`,
+        zt.id,
+        count(*) cou
+    from
+        t_person pn LEFT JOIN t_detailinfo df on pn.id = df.person_id
+                    LEFT JOIN (select * from t_dictionary where type = '3.13') zt on df.pay_close_attention = zt.id
+    where
+	  zt.id != 0
+    GROUP BY
+        zt.`name`,zt.id
+  </select>
+
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
