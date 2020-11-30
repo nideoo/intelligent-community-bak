@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.enc.constants.IntelligentCommunityStatic;
 import com.enc.dao.mapper.PersonMapper;
+import com.enc.dao.mapper.QueryPersonsMapper;
 import com.enc.domain.ResponseResult;
 import com.enc.domain.access.entity.*;
 import com.enc.domain.access.vo.PersonVo;
@@ -35,6 +36,9 @@ public class PersonsServiceImpl implements PersonsService {
     @Autowired
     private PersonMapper personMapper;
 
+    @Autowired
+    private QueryPersonsMapper queryPersonsMapper;
+
     @Value("${mais.persion.url}")
     private String personImgUrl;
 
@@ -50,6 +54,7 @@ public class PersonsServiceImpl implements PersonsService {
 
     @Value("${mais.server}")
     private String MAIS_SERVER;
+
 
     @Override
     /*public void savePersonsBatch() {
@@ -302,32 +307,10 @@ public class PersonsServiceImpl implements PersonsService {
 
     @Override
     public void queryPersonsBatch() {
-
         int index = 0;
         int count = 100;
-        for(int i = 0; i < 1230; i++){
-            if(i == 0){
-                index = 1;
-            }else{
-                index = i * count +1;
-            }
-            PersonVo o = new PersonVo();
-            o.setProjectID(PROJECTID);
-            o.setIndex(index);
-            o.setCount(count);
-            o.setDetail(1);
-            // o.setToken(msTokenService.getToKen());
-            String result = HttpRequest.sendPost(MAIS_SERVER + IntelligentCommunityStatic.QUERY_PERSON_URL,JSONObject.toJSONString(o),"utf-8");
-
-        }
-
-
-    }
-
-    public static void main(String[] args) {
-        int index = 0;
-        int count = 2;
-        for(int i = 0; i < 1230; i++){
+        for(int i = 15; i < 1230; i++){
+            System.out.println("i: " + i);
             if(i == 0){
                 index = 1;
             }else{
@@ -338,8 +321,8 @@ public class PersonsServiceImpl implements PersonsService {
             o.setIndex(index);
             o.setCount(count);
             o.setDetail(1);
-            o.setToken("c149c92c42444297a6a5393c73cbe3bd");
-            String result = HttpRequest.sendPost("http://60.255.139.164:3741" + IntelligentCommunityStatic.QUERY_PERSON_URL,JSONObject.toJSONString(o),"utf-8");
+            o.setToken(msTokenService.getToKen());
+            String result = HttpRequest.sendPost(MAIS_SERVER + IntelligentCommunityStatic.QUERY_PERSON_URL,JSONObject.toJSONString(o),"utf-8");
             JSONObject json = JSONObject.parseObject(result);
             JSONArray personsArray = json.getJSONArray("persons");
             for(Object obj : personsArray){
@@ -354,18 +337,15 @@ public class PersonsServiceImpl implements PersonsService {
                 queryPersonsEntity.setLandlordRelative(objJson.getString("landlordRelative"));
                 if(!objJson.getString("photo").equals("")){
                     String realTimePhotoName = UUID.randomUUID()+".jpg";
-                    // ConvertBase64ToImage.generateImage((personImgUrl+queryPersons),realTimePhotoName,objJson.getString("photo").replace("base64=data:image/jpg;base64,",""));
-                    ConvertBase64ToImage.generateImage(("C:\\tmp\\ms\\query-persons\\"),realTimePhotoName,objJson.getString("photo").replace("base64=data:image/jpg;base64,",""));
-                    // dEntity.setRealTimePhoto(personDataImgUrl+realTimePhotoName);
-                    // queryPersonsEntity.set(personDataImgUrl+realTimePhotoName);
+                    ConvertBase64ToImage.generateImage((personImgUrl+queryPersons),realTimePhotoName,objJson.getString("photo").replace("base64=data:image/jpg;base64,",""));
+                    queryPersonsEntity.setPhoto(queryPersons+realTimePhotoName);
+                }else{
+                    queryPersonsEntity.setPhoto("");
                 }
-
-                queryPersonsEntity.setPhoto(objJson.getString("photo"));
                 queryPersonsEntity.setPhone(objJson.getString("phone"));
                 queryPersonsEntity.setRegTime(objJson.getString("regTime"));
-
+                queryPersonsMapper.addQueryPersons(queryPersonsEntity);
             }
-            System.out.println();
         }
     }
 
